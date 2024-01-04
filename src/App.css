@@ -12,17 +12,6 @@
   /* text-align: center; */
 }
 
-#interface {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  z-index: 10;
-
-  /* background: rgba(255, 0, 0, 0.2); */
-}
-
 .canvas-wrapper {
 
   width: 100%;
@@ -30,4 +19,27 @@
 
   /* border: 1px solid red; */
   /* background-color: #ffffff; */
+}
+
+#interface {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  /* bottom: 0px; */
+  left: 0px;
+  z-index: 10;
+
+  height: 60px;
+
+  background: rgba(255, 255, 255, 0.5);
+
+  display: flex; 
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+button {
+    padding: 10px;
+    height: 40px;
+    /* border: 1px solid red; */
 }

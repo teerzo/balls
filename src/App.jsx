@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -7,12 +7,21 @@ import R3FCanvas from './canvas';
 
 
 function App() {
+  const canvasRef = useRef();
+
   const [count, setCount] = useState(0)
+
+  function spawnBall() {
+    console.log('spawnBall');
+    canvasRef.current.spawnBall()
+  } 
 
   return (
     <>
-      <R3FCanvas />
-      <div id="interface"> BUTTONS HERE </div>
+      <R3FCanvas ref={canvasRef} />
+      <div id="interface">
+        <button onClick={spawnBall}> SPAWN </button>
+      </div>
     </>
   )
 }
