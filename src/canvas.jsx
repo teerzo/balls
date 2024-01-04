@@ -7,20 +7,38 @@ import { Physics, usePlane, useBox } from '@react-three/cannon'
 import Ball from './ball'
 import Container from './container'
 
+// function Plane({ color, width, height, position, rotation, ...props}) {
+//     const [ref] = usePlane(() => ({ position: position, rotation: rotation, ...props }))
+//     return (
+//         <mesh ref={ref}>
+//             <planeGeometry args={[width, height]} />
+//             <meshStandardMaterial color={color ? color : 'orange'} />
+//         </mesh>
+//     )
+// }
+
+
 function Plane(props) {
-    const [ref] = usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], ...props }))
+    const [ref] = usePlane(() => ({ type: 'Static', ...props }), useRef(null))
     return (
-        <mesh ref={ref}>
-            <planeGeometry args={[100, 100]} />
-            <meshStandardMaterial color={'grey'} />
+      <group ref={ref}>
+        <mesh>
+          <planeGeometry args={[props.width, props.height]} />
+          <meshBasicMaterial color={props.color}/>
         </mesh>
+        <mesh receiveShadow>
+          <planeGeometry args={[props.width, props.height]} />
+          <shadowMaterial color="lightsalmon" />
+        </mesh>
+      </group>
     )
-}
+  }
+  
 
 function Cube(props) {
-    const [ref] = useBox(() => ({ mass: 1, position: [0, 15, 0], ...props }))
+    const [ref] = useBox(() => ({ mass: 1, position: [0, 8, 0], ...props }))
 
-    useFrame((state, delta) => (ref.current.position.z = 0))
+    // useFrame((state, delta) => (ref.current.position.z = 0))
 
     return (
         <mesh ref={ref}>
@@ -70,7 +88,17 @@ const R3FCanvas = forwardRef((props, ref) => {
                         return <Cube key={key} />
                     })}
 
-                    <Plane />
+                    <Plane color={'grey'} width={20} height={20} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} />
+
+                    <Plane color={'red'} width={10} height={5} position={[-5, 5, 0]} rotation={[-Math.PI/2,Math.PI/2,0]} />
+                    <Plane color={'red'} width={10} height={5} position={[5, 5, 0]} rotation={[-Math.PI/2,-Math.PI/2,0]} />
+
+                    <Plane color={'green'} width={10} height={10} position={[0, 5, -2]} rotation={[0,0,0]} />
+                    <Plane color={'blue'} width={10} height={10} position={[0, 5, 2]} rotation={[0,-Math.PI,0]} />
+
+                    {/* <Plane color={'red'} width={1} height={1} position={[-10, -10, 0]} rotation={[0, 0, 0]} /> */}
+                    {/* <Plane width={20} height={20} position={[10, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} /> */}
+                    {/* <Plane rotation={[Math.PI / 2, 0, 0]} /> */}
                     <Cube />
 
                 </Physics>
