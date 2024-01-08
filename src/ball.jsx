@@ -1,6 +1,8 @@
 import { createRoot } from 'react-dom/client'
-import React, { useRef, useState } from 'react'
-import { useFrame } from '@react-three/fiber'
+import React, { forwardRef, useRef, useImperativeHandle, useState, useEffect } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { Stats, OrbitControls } from '@react-three/drei'
+import { Physics, usePlane, useBox, useSphere } from '@react-three/cannon'
 
 export default function Ball(props) {
     // This reference will give us direct access to the mesh
@@ -13,8 +15,9 @@ export default function Ball(props) {
     // Return view, these are regular three.js elements expressed in JSX
     return (
         <mesh
-            {...props}
             ref={meshRef}
+            castShadow
+            {...props}
             // scale={active ? 1.5 : 1}
             onClick={(event) => setActive(!active)}
             onPointerOver={(event) => setHover(true)}

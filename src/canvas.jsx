@@ -1,105 +1,179 @@
 import { createRoot } from 'react-dom/client'
-import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react'
+import React, { forwardRef, useRef, useImperativeHandle, useState, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Stats, OrbitControls } from '@react-three/drei'
-import { Physics, usePlane, useBox } from '@react-three/cannon'
+import { Physics, usePlane, useBox, useSphere, Debug } from '@react-three/cannon'
 
-import Ball from './ball'
+import Balls from './balls';
 import Container from './container'
-
-// function Plane({ color, width, height, position, rotation, ...props}) {
-//     const [ref] = usePlane(() => ({ position: position, rotation: rotation, ...props }))
-//     return (
-//         <mesh ref={ref}>
-//             <planeGeometry args={[width, height]} />
-//             <meshStandardMaterial color={color ? color : 'orange'} />
-//         </mesh>
-//     )
-// }
-
 
 function Plane(props) {
     const [ref] = usePlane(() => ({ type: 'Static', ...props }), useRef(null))
     return (
-      <group ref={ref}>
-        <mesh>
-          <planeGeometry args={[props.width, props.height]} />
-          <meshBasicMaterial color={props.color}/>
-        </mesh>
-        <mesh receiveShadow>
-          <planeGeometry args={[props.width, props.height]} />
-          <shadowMaterial color="lightsalmon" />
-        </mesh>
-      </group>
-    )
-  }
-  
+        <group ref={ref} name="plane">
+            <mesh name="plane-1">
+                <planeGeometry args={[props.width, props.height]} />
+                <meshBasicMaterial color={props.color} />
+            </mesh>
+            <mesh name="plane-2" receiveShadow>
+                <planeGeometry args={[props.width + 1, props.height + 1]} />
+                <shadowMaterial color="lightsalmon" />
+            </mesh>
+        </group>
 
-function Cube(props) {
-    const [ref] = useBox(() => ({ mass: 1, position: [0, 8, 0], ...props }))
 
-    // useFrame((state, delta) => (ref.current.position.z = 0))
-
-    return (
-        <mesh ref={ref}>
-            <sphereGeometry args={[0.5, 24, 24]} />
-
-            <meshStandardMaterial color={'orange'} />
-        </mesh>
     )
 }
 
-
-
 const R3FCanvas = forwardRef((props, ref) => {
+
+    const container = { width: 3, height: 20 };
 
     const [balls, setBalls] = useState([]);
 
-    useImperativeHandle(ref, () => ({
+    useEffect(() => {
+        console.log('useEffect balls', balls);
+    }, [balls])
 
-        spawnBall() {
-            // alert("getAlert from Child");
-            // console.log('spawnBall');
-            let _balls = [...balls];
+    function collisionCheck(body, target) {
+        // console.log('collisionCheck-start', body, target);
+        console.log('collisionCheck-start', body?.userData.id, target?.userData.id);
 
-            _balls.push(<Cube />);
+        if (body.userData.size === target.userData.size) {
+            let _balls = [];
+
+
+
+            for (let i = 0; i < balls.length; i++) {
+                let bodyMatch = false;
+                let targetMatch = false;
+
+                if (balls[i].id === body.userData.id) {
+                    bodyMatch = true;
+                }
+                else if (balls[i].id === target.userData.id) {
+                    targetMatch = true;
+                }
+
+                // for( let j in ids ) {
+                //     if( balls[i].id === ids[j] ) {
+                //         match = true;
+                //     }
+                // }
+                if (bodyMatch) {
+                    let _ball = { ...balls[i] };
+                    // _ball.size += 1;
+                    // _balls.push(_ball);
+                    // const newBall = createBall(balls[i].size+1, balls[i].position);
+                    // _balls.push(newBall);
+                }
+                else if (!bodyMatch && !targetMatch) {
+                    // _balls.push(balls[i]);
+                }
+                _balls.push(balls[i]);
+            }
+            if (body.userData.size + 1 < 4) {
+                const pos = [0, container.height, 0];
+                const newBall = createBall(body.userData.size + 1, pos);
+                // const newBall = createBall(3);
+                newBall.direction = container.height;
+                _balls.push(newBall);
+            }
+
+            console.log('collisionCheck balls', _balls);
 
             setBalls(_balls);
         }
+    }
 
+    function createBall(size = 0, position) {
+        let date = Date.now();
+        console.log('createBall', size, date);
+        const onCollide = (e) => {
+            if (e?.body?.name === 'ball' && e?.target?.name === 'ball') {
+                // console.log('onCollide', e?.target?.name, e );
+                collisionCheck(e.body, e.target);
+            }
+        }
+        const radius = (size + 1) * 2.1 - 1;
+
+        const newBall = { id: date, direction: container.height, size: size, radius: radius, position: position, onCollide }
+
+        return newBall;
+    }
+
+    useImperativeHandle(ref, () => ({
+
+
+
+        spawnBall() {
+            const size = 0;
+            const pos = [getRand(-container.width/2, container.width/2), container.height, 0];
+            console.log('pos', pos);
+            // alert("getAlert from Child");
+            // console.log('spawnBall');
+            let _balls = [...balls];
+            _balls.push(createBall(size, pos));
+            setBalls(_balls);
+        }
     }));
+
+    function getRand(min, max) {
+        return Math.random() * (max - min) + min;
+    }
 
 
     return (
         <div className='canvas-wrapper'>
-            <Canvas camera={{ position: [0, 5, 15] }}>
-                <OrbitControls target={[0, 5, 0]} />
+            <Canvas
+                // shadows 
+                camera={{ position: [0, container.height/2, container.height] }}
+                gl={{
+                    // alpha: false,
+                    // todo: stop using legacy lights
+                    // useLegacyLights: true,
+                }}>
+                <OrbitControls target={[0, container.height/2, 0]} />
                 <ambientLight intensity={Math.PI / 2} />
-                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-                <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+                {/* <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} /> */}
+                {/* <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} /> */}
+
+                {/* <hemisphereLight intensity={0.35} /> */}
+                <spotLight
+                    position={[5, 5, 5]}
+                    angle={0.3}
+                    penumbra={1}
+                    intensity={2}
+                    castShadow
+                    shadow-mapSize-width={1028}
+                    shadow-mapSize-height={1028}
+                />
+
 
                 <Physics>
                     {/* Physics related objects in here please */}
-                    <Container />
-                    {/* <Ball /> */}
+                    <Debug scale={1.01} color={"red"}>
+                        <Container width={container.width} height={container.height} />
+                    </Debug>
+                    <Debug scale={1.1} color={"green"}>
 
-                    {balls.map((item, key) => {
+                        <Balls balls={balls} />
+                    </Debug>
+
+                    {/* {balls.map((item, key) => {
                         // return item;
-                        return <Cube key={key} />
-                    })}
+                        return <Ball key={key} size={item.size} radius={item.radius} position={item.position} direction={item.direction} userData={{ id: item.id, size: item.size }} onCollide={item.onCollide} />
+                    })} */}
+                    <Debug scale={1.1} color={"green"}>
 
-                    <Plane color={'grey'} width={20} height={20} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} />
+                        <Plane color={'grey'} width={20} height={20} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} />
+                    </Debug>
 
-                    <Plane color={'red'} width={10} height={5} position={[-5, 5, 0]} rotation={[-Math.PI/2,Math.PI/2,0]} />
-                    <Plane color={'red'} width={10} height={5} position={[5, 5, 0]} rotation={[-Math.PI/2,-Math.PI/2,0]} />
+                    {/* <Plane color={'red'} width={10} height={5} position={[-5, 5, 0]} rotation={[-Math.PI / 2, Math.PI / 2, 0]} /> */}
+                    {/* <Plane color={'red'} width={10} height={5} position={[5, 5, 0]} rotation={[-Math.PI / 2, -Math.PI / 2, 0]} /> */}
 
-                    <Plane color={'green'} width={10} height={10} position={[0, 5, -2]} rotation={[0,0,0]} />
-                    <Plane color={'blue'} width={10} height={10} position={[0, 5, 2]} rotation={[0,-Math.PI,0]} />
-
-                    {/* <Plane color={'red'} width={1} height={1} position={[-10, -10, 0]} rotation={[0, 0, 0]} /> */}
-                    {/* <Plane width={20} height={20} position={[10, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} /> */}
-                    {/* <Plane rotation={[Math.PI / 2, 0, 0]} /> */}
-                    <Cube />
+                    {/* <Plane color={'green'} width={10} height={10} position={[0, 5, -3]} rotation={[0, 0, 0]} /> */}
+                    {/* <Plane color={'blue'} width={10} height={10} position={[0, 5, 3]} rotation={[0, -Math.PI, 0]} /> */}
 
                 </Physics>
             </Canvas>
