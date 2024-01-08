@@ -7,21 +7,29 @@ import { Physics, usePlane, useBox, useSphere, Debug } from '@react-three/cannon
 import Balls from './balls';
 import Container from './container'
 
-function Plane(props) {
-    const [ref] = usePlane(() => ({ type: 'Static', ...props }), useRef(null))
+// function Plane(props) {
+//     const [ref] = usePlane(() => ({ type: 'Static', ...props }), useRef(null))
+//     return (
+//         <group ref={ref} name="plane">
+//             {/* <mesh name="plane-1">
+//                 <planeGeometry args={[props.width, props.height]} />
+//                 <meshBasicMaterial color={props.color} transparent opacity={0} />
+//             </mesh> */}
+//             <mesh name="plane-2" receiveShadow>
+//                 <planeGeometry args={[props.width + 1, props.height + 1]} />
+//                 <meshStandardMaterial color={'#9b7653'} />
+//             </mesh>
+//         </group>
+//     )
+// }
+
+const Plane = (props) => {
+    const [ref] = usePlane(() => ({ ...props }), useRef(null))
     return (
-        <group ref={ref} name="plane">
-            <mesh name="plane-1">
-                <planeGeometry args={[props.width, props.height]} />
-                <meshBasicMaterial color={props.color} />
-            </mesh>
-            <mesh name="plane-2" receiveShadow>
-                <planeGeometry args={[props.width + 1, props.height + 1]} />
-                <shadowMaterial color="lightsalmon" />
-            </mesh>
-        </group>
-
-
+        <mesh ref={ref} receiveShadow>
+            <planeGeometry args={[100, 100]} />
+            <meshStandardMaterial color={'#9b7653'} />
+        </mesh>
     )
 }
 
@@ -136,15 +144,19 @@ const R3FCanvas = forwardRef((props, ref) => {
     return (
         <div className='canvas-wrapper'>
             <Canvas
-                // shadows 
+                shadows
                 camera={{ position: [0, container.height / 2, container.height] }}
                 gl={{
                     // alpha: false,
                     // todo: stop using legacy lights
-                    // useLegacyLights: true,
+                    useLegacyLights: true,
                 }}>
                 <OrbitControls target={[0, container.height / 2, 0]} />
-                <ambientLight intensity={Math.PI / 2} />
+
+                <pointLight position={[0, 20, 10]} castShadow />
+                <ambientLight intensity={0.2} />
+
+                {/* <ambientLight intensity={Math.PI / 2} /> */}
                 {/* <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} /> */}
                 {/* <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} /> */}
 
@@ -162,29 +174,15 @@ const R3FCanvas = forwardRef((props, ref) => {
 
                 <Physics>
                     {/* Physics related objects in here please */}
-                    <Debug scale={1.01} color={"red"}>
-                        <Container container={container} />
-                    </Debug>
-                    <Debug scale={1.1} color={"green"}>
-
-                        <Balls balls={balls} />
-                    </Debug>
-
-                    {/* {balls.map((item, key) => {
-                        // return item;
-                        return <Ball key={key} size={item.size} radius={item.radius} position={item.position} direction={item.direction} userData={{ id: item.id, size: item.size }} onCollide={item.onCollide} />
-                    })} */}
-                    <Debug scale={1.1} color={"green"}>
-
-                        <Plane color={'grey'} width={20} height={20} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} />
-                    </Debug>
-
-                    {/* <Plane color={'red'} width={10} height={5} position={[-5, 5, 0]} rotation={[-Math.PI / 2, Math.PI / 2, 0]} /> */}
-                    {/* <Plane color={'red'} width={10} height={5} position={[5, 5, 0]} rotation={[-Math.PI / 2, -Math.PI / 2, 0]} /> */}
-
-                    {/* <Plane color={'green'} width={10} height={10} position={[0, 5, -3]} rotation={[0, 0, 0]} /> */}
-                    {/* <Plane color={'blue'} width={10} height={10} position={[0, 5, 3]} rotation={[0, -Math.PI, 0]} /> */}
-
+                    {/* <Debug scale={1.01} color={"red"}> */}
+                    <Container container={container} />
+                    {/* </Debug> */}
+                    {/* <Debug scale={1.1} color={"green"}> */}
+                    <Balls balls={balls} />
+                    {/* </Debug> */}
+                    {/* <Debug scale={1.1} color={"green"}> */}
+                    <Plane color={'grey'} width={20} height={20} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} />
+                    {/* </Debug> */}
                 </Physics>
             </Canvas>
         </div>

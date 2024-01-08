@@ -90,7 +90,7 @@ function Ball({direction = 20, position, ...props}) {
     return (
         <mesh castShadow receiveShadow ref={ref}>
             <sphereGeometry args={[1, 32, 32]} />
-            <meshStandardMaterial color="red" transparent opacity={0.5} />
+            <meshStandardMaterial color="red" />
         </mesh>
     )
 }
@@ -159,8 +159,8 @@ export default function Balls({ balls, ...props }) {
 
     return (
         <group>
-            <ScalableBall />
-            {balls && balls.length > 1 ?
+            {/* <ScalableBall /> */}
+            {balls && balls.length > 0 ?
                 balls.map((item, key) => {
                     return <Ball key={key} {...item} />
                 })
