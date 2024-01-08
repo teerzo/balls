@@ -27,7 +27,7 @@ function Plane(props) {
 
 const R3FCanvas = forwardRef((props, ref) => {
 
-    const container = { width: 3, height: 20 };
+    const container = { width: 20, height: 30, depth: 3 };
 
     const [balls, setBalls] = useState([]);
 
@@ -108,7 +108,7 @@ const R3FCanvas = forwardRef((props, ref) => {
 
         spawnBall() {
             const size = 0;
-            const pos = [getRand(-container.width/2, container.width/2), container.height, 0];
+            const pos = getBallRand();
             console.log('pos', pos);
             // alert("getAlert from Child");
             // console.log('spawnBall');
@@ -117,6 +117,16 @@ const R3FCanvas = forwardRef((props, ref) => {
             setBalls(_balls);
         }
     }));
+
+    function getBallRand() {
+
+        const min = (-container.width / 2) + 1;
+        const max = (container.width / 2) - 1;
+        console.log('getBallRand', min, max);
+
+        let pos = [getRand(min, max), container.height, 0];
+        return pos;
+    }
 
     function getRand(min, max) {
         return Math.random() * (max - min) + min;
@@ -127,13 +137,13 @@ const R3FCanvas = forwardRef((props, ref) => {
         <div className='canvas-wrapper'>
             <Canvas
                 // shadows 
-                camera={{ position: [0, container.height/2, container.height] }}
+                camera={{ position: [0, container.height / 2, container.height] }}
                 gl={{
                     // alpha: false,
                     // todo: stop using legacy lights
                     // useLegacyLights: true,
                 }}>
-                <OrbitControls target={[0, container.height/2, 0]} />
+                <OrbitControls target={[0, container.height / 2, 0]} />
                 <ambientLight intensity={Math.PI / 2} />
                 {/* <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} /> */}
                 {/* <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} /> */}
@@ -153,7 +163,7 @@ const R3FCanvas = forwardRef((props, ref) => {
                 <Physics>
                     {/* Physics related objects in here please */}
                     <Debug scale={1.01} color={"red"}>
-                        <Container width={container.width} height={container.height} />
+                        <Container container={container} />
                     </Debug>
                     <Debug scale={1.1} color={"green"}>
 

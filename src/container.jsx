@@ -38,19 +38,22 @@ function Box({ position, scale = [1, 1, 1], transparent = false, ...props }) {
     )
 }
 
-export default function Container({ width = 3, height = 10, ...props }) {
+export default function Container({ container, ...props }) {
     const ref = useRef()
+
+    const { width, height, depth} = {...container};
+
 
     return (
         <group ref={ref} name="container">
             {/* <Box name={'box-1'} /> */}
             {/* <Box position={[-5, 1, 0]} scale={[1,1,1]} /> */}
             {/* <Box position={[-5, 5, 0]} scale={[1,1,1]} /> */}
-            <Box position={[-5, height/2, 0]} scale={[0.2, height, width]} type="Static" />
-            <Box position={[5, height/2, 0]} scale={[0.2, height, width]} type="Static" />
+            <Box position={[-width/2, height/2, 0]} scale={[0.2, height, depth]} type="Static" />
+            <Box position={[width/2, height/2, 0]} scale={[0.2, height, depth]} type="Static" />
 
-            <Box position={[0, height/2, -width/2]} scale={[10, height, 0.2]} type="Static" />
-            <Box position={[0, height/2, width/2]} scale={[10, height, 0.2]} transparent={true} type="Static" />
+            <Box position={[0, height/2, -depth/2]} scale={[width, height, 0.2]} type="Static" />
+            <Box position={[0, height/2, depth/2]} scale={[width, height, 0.2]} transparent={true} type="Static" />
 
         </group>
     )
