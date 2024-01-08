@@ -18,8 +18,11 @@ function App() {
 
   return (
     <>
+      <div className="header">
+        <button onClick={spawnBall}> SPAWN </button>
+      </div>
       <R3FCanvas ref={canvasRef} />
-      <div id="interface">
+      <div className="footer">
         <button onClick={spawnBall}> SPAWN </button>
       </div>
     </>
