@@ -1,11 +1,13 @@
 import { createRoot } from 'react-dom/client'
 import React, { forwardRef, useRef, useImperativeHandle, useState, useEffect } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Stats, OrbitControls } from '@react-three/drei'
 import { Physics, usePlane, useBox, useSphere, Debug } from '@react-three/cannon'
 
 import Balls from './balls';
 import Container from './container'
+import Cursor from './cursor'
+import Camera from './camera'
 
 // function Plane(props) {
 //     const [ref] = usePlane(() => ({ type: 'Static', ...props }), useRef(null))
@@ -42,6 +44,9 @@ const R3FCanvas = forwardRef((props, ref) => {
     useEffect(() => {
         console.log('useEffect balls', balls);
     }, [balls])
+
+    
+   
 
     function collisionCheck(body, target) {
         // console.log('collisionCheck-start', body, target);
@@ -151,7 +156,9 @@ const R3FCanvas = forwardRef((props, ref) => {
                     // todo: stop using legacy lights
                     useLegacyLights: true,
                 }}>
-                <OrbitControls target={[0, container.height / 2, 0]} />
+
+                <Camera container={container} />
+                {/* <OrbitControls target={[0, container.height / 2, 0]} enabled={false} /> */}
 
                 <pointLight position={[0, 20, 10]} castShadow />
                 <ambientLight intensity={0.2} />
@@ -172,17 +179,25 @@ const R3FCanvas = forwardRef((props, ref) => {
                 />
 
 
+
+                {/* <Debug scale={1.01} color={"red"}> */}
+                <Cursor container={container} />
+                {/* </Debug> */}
                 <Physics>
                     {/* Physics related objects in here please */}
                     {/* <Debug scale={1.01} color={"red"}> */}
                     <Container container={container} />
                     {/* </Debug> */}
-                    {/* <Debug scale={1.1} color={"green"}> */}
-                    <Balls balls={balls} />
-                    {/* </Debug> */}
+                    <Debug scale={1.1} color={"green"}>
+                        <Balls balls={balls} />
+                    </Debug>
                     {/* <Debug scale={1.1} color={"green"}> */}
                     <Plane color={'grey'} width={20} height={20} position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} />
                     {/* </Debug> */}
+
+
+
+
                 </Physics>
             </Canvas>
         </div>
