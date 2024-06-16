@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client'
 import React, { useEffect, useRef, useState } from 'react'
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Stats, OrbitControls } from '@react-three/drei'
-import { useBox } from '@react-three/cannon'
+// import { useBox } from '@react-three/cannon'
 
 function Box({ width, height, depth, ...props }) {
     // This reference will give us direct access to the mesh

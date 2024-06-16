@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client'
 import React, { forwardRef, useRef, useImperativeHandle, useState, useEffect } from 'react'
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Stats, OrbitControls } from '@react-three/drei'
-import { Physics, usePlane, useBox, useSphere, Debug } from '@react-three/cannon'
+// import { Physics, usePlane, useBox, useSphere, Debug } from '@react-three/cannon'
 import * as THREE from "three";
 
 

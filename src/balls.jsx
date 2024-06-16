@@ -2,7 +2,9 @@ import { createRoot } from 'react-dom/client'
 import React, { forwardRef, useRef, useImperativeHandle, useState, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Stats, OrbitControls } from '@react-three/drei'
-import { Physics, usePlane, useBox, useSphere } from '@react-three/cannon'
+// import { Physics, usePlane, useBox, useSphere } from '@react-three/cannon'
+
+import Ball from './ball.jsx';
 
 // function Ball(props) {
 //     // This reference will give us direct access to the mesh
@@ -58,42 +60,42 @@ function ScalableBall(props) {
     )
 }
 
-function Ball({direction = 20, position, ...props}) {
+// function Ball({direction = 20, position, ...props}) {
 
-    console.log('direction', direction);
-    console.log('position', position);
-    console.log('props', props);
+//     console.log('direction', direction);
+//     console.log('position', position);
+//     console.log('props', props);
 
-    // const position = [ Math.floor(Math.random() * 5) , props?.position[1], 0];
+//     // const position = [ Math.floor(Math.random() * 5) , props?.position[1], 0];
 
-    const [ref, api] = useSphere(
-        () => ({
-            args: [1],
-            mass: 1,
-            position: position,
-            ...props
-        }),
-        useRef(null),
-    )
+//     const [ref, api] = useSphere(
+//         () => ({
+//             args: [1],
+//             mass: 1,
+//             position: position,
+//             ...props
+//         }),
+//         useRef(null),
+//     )
 
-    useEffect(() => {
-        const x = Math.random();
-        const y = -direction //Math.random();
-        const z = Math.random();
-        api.applyImpulse([x, y, z], [x, y, z])
-        // api.position.set(0,0,0)
+//     useEffect(() => {
+//         const x = Math.random();
+//         const y = -direction //Math.random();
+//         const z = Math.random();
+//         api.applyImpulse([x, y, z], [x, y, z])
+//         // api.position.set(0,0,0)
 
-        console.log('BALL', props.size);
-    }, [])
+//         console.log('BALL', props.size);
+//     }, [])
 
 
-    return (
-        <mesh castShadow receiveShadow ref={ref}>
-            <sphereGeometry args={[1, 32, 32]} />
-            <meshStandardMaterial color="red" />
-        </mesh>
-    )
-}
+//     return (
+//         <mesh castShadow receiveShadow ref={ref}>
+//             <sphereGeometry args={[1, 32, 32]} />
+//             <meshStandardMaterial color="red" />
+//         </mesh>
+//     )
+// }
 
 function LBall(props) {
     console.log('ball', props.id, props.size);
@@ -158,7 +160,7 @@ export default function Balls({ balls, ...props }) {
     }, [balls])
 
     return (
-        <group>
+        <>
             {/* <ScalableBall /> */}
             {balls && balls.length > 0 ?
                 balls.map((item, key) => {
@@ -166,8 +168,6 @@ export default function Balls({ balls, ...props }) {
                 })
                 : null
             }
-            {/* <ScalableBall key={key} /> */}
-
-        </group>
+        </>
     )
 }
