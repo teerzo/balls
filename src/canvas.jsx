@@ -19,18 +19,50 @@ import Ball from './ball';
 // import Cursor from './cursor'
 import Camera from './camera'
 
-const useBallStore = create((set) => ({
+const useBallStore = create((set, get) => ({
     ballCount: 0,
     balls: [],
+    action: () => {
+        const balls = get().balls;
+    },
+
     addBall: (size, position) => {
-        console.log('addBall', size, position);
-        set((state) => ({ balls: [...state.balls, { size, position, name: 'ball-' + state.ballCount+1 }], ballCount: state.ballCount + 1 }))
+        // console.log('addBall', size, position);
+        set((state) => ({ balls: [...state.balls, { size, position, name: 'ball-' + (state.ballCount + 1) }], ballCount: state.ballCount + 1 }))
     },
     mergeBalls: (a, b) => {
-        console.log('mergeBalls', a, b);
+        // console.log('mergeBalls', a, b);
+        set((state) => {
+            const balls = state.balls.filter((ball) => ball.name !== b.name);
 
-        set((state) => ({ balls: state.balls.filter(ball => ball.name !== a && ball.name !== b) }));
-    }
+            for (let i = 0; i < balls.length; i++) {
+                if (balls[i].name === a.name) {
+                    balls[i].size += 1;
+                    balls[i].position = a.position;
+                }
+            }
+
+            return { balls };
+        })
+
+        // set((state) => ({ balls: state.balls.filter((ball) => ball.name !== a.name && ball.name !== b.name) }));
+    },
+
+    // removeTodo: (id) =>
+    //     useTodosStore.setState((state) => ({
+    //         todos: state.todos.filter((todo) => todo.id !== id),
+    //     })),
+
+    // reorderTodo: (id: number, position: number) =>
+    //     useTodosStore.setState((state) => {
+    //         const todos = [...state.todos];
+    //         const todo = todos.find((todo) => todo.id === id);
+    //         if (!todo) return;
+    //         const idx = todos.indexOf(todo);
+    //         todos.splice(idx, 1);
+    //         todos.splice(position, 0, todo);
+    //         return { todos };
+    //     }),
 }));
 
 
@@ -186,10 +218,10 @@ const R3FCanvas = forwardRef((props, ref) => {
                             target.rigidBodyObject.userData.disabled = true;
                             other.rigidBodyObject.userData.disabled = true;
 
-                            position.copy( target.rigidBodyObject.position);
+                            position.copy(target.rigidBodyObject.position);
 
-                            mergeBalls(target.rigidBodyObject.name, other.rigidBodyObject.name);
-                            addBall(target.rigidBodyObject.size + 1, position);
+                            mergeBalls(target.rigidBodyObject, other.rigidBodyObject);
+                            // addBall(target.rigidBodyObject.size + 1, position);
                         }
                     }
                 }

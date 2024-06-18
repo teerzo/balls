@@ -56,6 +56,14 @@ export default function Ball({ ...props }) {
     const sizeFactor = 0.1;
     const [size, setSize] = useState(defaultSize);
 
+    const [position, setPosition] = useState([0, 0, 0]);
+
+    useEffect(() => {
+        if( props.position) {
+            setPosition(props.position);
+        }
+    },[]);
+
     useEffect(() => {
         if (props.size > 1 && props.size <= colours.length) {
 
