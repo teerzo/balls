@@ -11,10 +11,10 @@ function App() {
 
   const [count, setCount] = useState(0)
 
-  function spawnBall() {
-    // console.log('spawnBall');
-    canvasRef.current.spawnBall()
-  } 
+  // function spawnBall() {
+  //   // console.log('spawnBall');
+  //   canvasRef.current.spawnBall()
+  // } 
 
   return (
     <>
